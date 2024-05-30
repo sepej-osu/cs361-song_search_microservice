@@ -32,5 +32,20 @@ def search(query):
 
     return songs_json
 
+# get song info route
+@app.route("/song_info/<string:videoId>")
+def song_info(videoId):
+    song = ytmusic.get_song(videoId)
+
+    # create a new dictionary with only certain values
+    song_info = {'title': song['videoDetails']['title'],
+                 'artist': song['videoDetails']['author'],
+                 'duration_seconds': song['videoDetails']['lengthSeconds'],
+                 'thumbnail': song['videoDetails']['thumbnail']['thumbnails'][3]['url']}
+
+    song_json = json.dumps(song_info, indent=4)
+
+    return song_json
+
 if __name__ == '__main__':
     app.run(debug=True)

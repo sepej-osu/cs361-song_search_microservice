@@ -1,10 +1,12 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask_cors import CORS
 from ytmusicapi import YTMusic
 import json
 
 ytmusic = YTMusic("oauth.json")
 
 app = Flask(__name__)
+CORS(app)
 
 # search route
 @app.route("/search/<string:query>")
@@ -30,7 +32,9 @@ def search(query):
 
     songs_json = json.dumps(songs, indent=4)
 
-    return songs_json
+    print(songs_json)
+
+    return jsonify(songs_json)
 
 # get song info route
 @app.route("/song_info/<string:videoId>")
@@ -41,11 +45,12 @@ def song_info(videoId):
     song_info = {'title': song['videoDetails']['title'],
                  'artist': song['videoDetails']['author'],
                  'duration_seconds': song['videoDetails']['lengthSeconds'],
-                 'thumbnail': song['videoDetails']['thumbnail']['thumbnails'][3]['url']}
+                 'thumbnail': song['videoDetails']['thumbnail']['thumbnails'][3]['url'],
+                 'videoId': videoId}
 
     song_json = json.dumps(song_info, indent=4)
 
     return song_json
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, port=5003)
